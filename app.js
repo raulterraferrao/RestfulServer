@@ -12,7 +12,8 @@ mongoose.connect(
   
      { 
       useNewUrlParser: true, 
-      useUnifiedTopology: true 
+      useUnifiedTopology: true ,
+      useCreateIndex: true
     }
   
   ).then().catch(err => console.log(err));
@@ -20,6 +21,7 @@ mongoose.connect(
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
+const userRoutes = require('./api/routes/users')
 
 app.use(morgan('dev')); //log the incoming request
 app.use(express.static('public')) // make the public folder acessible from the url ex: localhost:3000/images/1.jpg
@@ -29,6 +31,7 @@ app.use(cors());
 //Router which should handle request
 app.use('/api/produtos', productRoutes);
 app.use('/api/pedidos', orderRoutes);
+app.use('/api/usuarios', userRoutes)
 
 app.use((req, res, next) => {
     const error = new Error('Not found');
