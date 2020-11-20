@@ -34,7 +34,7 @@ app.use('/api/pedidos', orderRoutes);
 app.use('/api/usuarios', userRoutes)
 
 app.use((req, res, next) => {
-    const error = new Error('Not found');
+    const error = new Error('Página não encontrada');
     error.status = 404;
     next(error);
 });

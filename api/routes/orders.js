@@ -5,19 +5,9 @@ const mongoose = require("mongoose");
 const Order = require("../models/order");
 const Product = require("../models/product");
 
-router.get("/", (req, res, next) => {
-  Order.find()
-    .select("_id produtoMongoId quantidade")
-    .populate("produtoMongoId")
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      res.status(500).json({
-        error: err,
-      });
-    });
-});
+const OrdersController = require('../controllers/orders')
+
+router.get("/", OrdersController.orders_get_all);
 
 router.post("/", (req, res, next) => {
   const id = req.body.produtoMongoId;

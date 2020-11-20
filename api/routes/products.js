@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require("multer");
+const checkAuth = require('../middleware/check-auth')
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -44,12 +45,11 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", upload.single("produtoImg"), (req, res, next) => {
-  console.log(req.file);
+router.post("/", checkAuth, upload.single("produtoImg"), (req, res, next) => {
   const product = {
     _id: new mongoose.Types.ObjectId(),
     idSistema: req.body.idSistema,
-    nome: req.body.name,
+    nome: req.body.nome,
     descricao: req.body.descricao,
     marca: req.body.marca,
     preco: req.body.preco,
@@ -67,7 +67,7 @@ router.post("/", upload.single("produtoImg"), (req, res, next) => {
       console.log(err);
     });
 });
-router.post("/uploadImg", upload.single("produtoImg"), (req, res, next) => {
+router.post("/uploadImg",checkAuth, upload.single("produtoImg"), (req, res, next) => {
   console.log(req.file);
   console.log("posted");
   res.status(200).json({
