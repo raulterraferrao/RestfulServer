@@ -46,18 +46,11 @@ router.get("/", (req, res, next) => {
 });
 
 router.post("/", checkAuth, upload.single("produtoImg"), (req, res, next) => {
-  const product = {
-    _id: new mongoose.Types.ObjectId(),
-    idSistema: req.body.idSistema,
-    nome: req.body.nome,
-    descricao: req.body.descricao,
-    marca: req.body.marca,
-    preco: req.body.preco,
-    estoque: req.body.estoque,
-    embalagem: req.body.embalagem,
-  };
+  const product =  new Product(
+    req.body
+  );
 
-  Product.create(product)
+  product.save(product)
     .then((result) => {
       res.status(200).json(result);
       console.log(result);

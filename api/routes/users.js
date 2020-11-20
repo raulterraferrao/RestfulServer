@@ -33,7 +33,7 @@ router.post("/registrar", (req, res, next) => {
             });
             User.create(user)
               .then((result) => {
-                res.status(200).json({
+                res.status(201).json({
                   mensagem: "Usuario criado com sucesso",
                   usuario: result.email,
                 });

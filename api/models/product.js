@@ -1,10 +1,9 @@
 const mongoose = require('mongoose')
 
 const productSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     idSistema: Array,
-    nome : String,
-    descricao: Array,
+    nome : {type: String, required: true},
+    descricao: {type:[String], validate: { validator : v => Array.isArray(v) && v.length > 0, message: "Informe pelo menos uma descrição"}},
     marca: String,
     preco: Array,
     estoque: Array,
