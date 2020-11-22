@@ -1,7 +1,0 @@
-{
-    "env": {
-        "DB_LOCAL_URI": "mongodb://localhost:27017/test",
-        "DB_ATLAS_URI": "mongodb+srv://raulterra:casaferrao101@testcluster.iwbq9.mongodb.net/test?retryWrites=true&w=majority",
-        "JWT_KEY": "casaferrao101"
-    }
-}
