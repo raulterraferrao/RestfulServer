@@ -5,53 +5,44 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
+const { restart } = require("nodemon");
 
-router.post("/registrar", (req, res, next) => {
-  if (req.body.email !== undefined) {
-    User.find({ email: req.body.email }).then((user) => {
-      if (user.length >= 1) {
-        return res.status(409).json({
-          message: "Email já existe",
-        });
-      } else {
-        if (req.body.senha === undefined) {
-          return res.status(500).json({
-            mensagem: "É necessário o campo senha",
-          });
-        }
-        bcrypt.hash(req.body.senha, 10, (err, hash) => {
-          if (err) {
-            console.log(err);
-            return res.status(500).json({
-              erro: err,
-            });
-          } else {
-            const user = new User({
-              _id: new mongoose.Types.ObjectId(),
-              email: req.body.email,
-              senha: hash,
-            });
-            User.create(user)
-              .then((result) => {
-                res.status(201).json({
-                  mensagem: "Usuario criado com sucesso",
-                  usuario: result.email,
-                });
-              })
-              .catch((err) => {
-                console.log(err);
-                res.status(500).json({
-                  mensagem: "Não foi possivel criar o usuario",
-                  erro: err,
-                });
-              });
-          }
-        });
-      }
+const handleRegisterErrors = (err) => {
+  console.log(err.message, err.code);
+  let errors = { email: "", senha: "" };
+
+  //duplicate error code
+  if(err.code === 11000){
+    errors.email = 'Email já registrado'
+    return errors;
+  }
+
+  //validation errors
+  if (err.message.includes("User validation failed")) {
+    Object.values(err.errors).forEach(({properties}) => {
+      console.log(properties);
+      errors[properties.path] = properties.message
     });
-  } else {
-    return res.status(500).json({
-      mensagem: "É necessário o campo email",
+    return errors;
+  }
+};
+
+router.post("/registrar", async (req, res, next) => {
+  const user = new User({
+    email: req.body.email,
+    senha: req.body.senha,
+  });
+  try {
+    await user.save();
+    res.status(200).json({
+      message: "Usuario criado com sucesso",
+    });
+  } catch (err) {
+    const errors = handleRegisterErrors(err);
+    res.status(400).json({
+      err: {
+        message: errors,
+      },
     });
   }
 });
@@ -78,12 +69,12 @@ router.post("/entrar", (req, res, next) => {
               },
               process.env.JWT_KEY,
               {
-                  expiresIn: "1h"
+                expiresIn: "1h",
               }
             );
             return res.status(200).json({
               mensagem: "Autenticação bem sucedida",
-              token: token
+              token: token,
             });
           } else {
             return res.status(401).json({
