@@ -5,7 +5,7 @@ const app = express();
 const morgan = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
-
+const cookieParser = require('cookie-parser');
 mongoose.connect(
 
     process.env.DB_ATLAS_URI,
@@ -23,6 +23,8 @@ const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 const userRoutes = require('./api/routes/users')
 
+//middleware
+app.use(cookieParser());
 app.use(morgan('dev')); //log the incoming request
 app.use(express.static('public')) // make the public folder acessible from the url ex: localhost:3000/images/1.jpg
 app.use(express.urlencoded({extended: false,limit: '50mb'}));
