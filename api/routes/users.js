@@ -9,46 +9,8 @@ const { restart } = require("nodemon");
 const UsersController = require('../controllers/users')
 
 router.post("/entrar", UsersController.user_login);
-
-const handleRegisterErrors = (err) => {
-  console.log(err.message, err.code);
-  let errors = { email: "", senha: "" };
-
-  //duplicate error code
-  if(err.code === 11000){
-    errors.email = 'Email já registrado'
-    return errors;
-  }
-
-  //validation errors
-  if (err.message.includes("User validation failed")) {
-    Object.values(err.errors).forEach(({properties}) => {
-      console.log(properties);
-      errors[properties.path] = properties.message
-    });
-    return errors;
-  }
-};
-
-router.post("/registrar", async (req, res, next) => {
-  const user = new User({
-    email: req.body.email,
-    senha: req.body.senha,
-  });
-  try {
-    await user.save();
-    res.status(200).json({
-      message: "Usuario criado com sucesso",
-    });
-  } catch (err) {
-    const errors = handleRegisterErrors(err);
-    res.status(400).json({
-      err: {
-        message: errors,
-      },
-    });
-  }
-});
+router.post("/registrar", UsersController.user_signup);
+router.post("/sair", UsersController.user_logout);
 
 
 router.delete("/:email", (req, res, next) => {
